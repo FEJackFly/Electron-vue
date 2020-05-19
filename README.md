@@ -1,24 +1,37 @@
-# electron
+# 缓存离线包
 
-## Project setup
-```
-npm install
-```
+Linux：$XDG_CACHE_HOME或~/.cache/electron/
+苹果系统：~/Library/Caches/electron/
+Windows：$LOCALAPPDATA/electron/Cache 或~/AppData/Local/electron/Cache/
 
-### Compiles and hot-reloads for development
-```
+# vuecli4.x 创建项目
+
+vue create XXX
+
+# 安装 electron-chromedriver
+
+cnpm install --save electron-chromedriver
+
+# 加载 electron-builder
+
+vue add electron-builder
+
+# 初始化
+
+cnpm install
+
+# vue serve
+
 npm run serve
-```
 
-### Compiles and minifies for production
-```
+# vue build
+
 npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+# electron:serve
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+npm run electron:serve
+
+# electron:build
+
+npm run electron:build
