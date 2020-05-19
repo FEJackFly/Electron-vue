@@ -1,0 +1,207 @@
+# 2020 年 Electron 如火如荼，万万没想到前端也能开发桌面级应用了，今天就环境搭建，项目开发，应用打包来说说 Electron。一半分享，一半自用。
+
+## 环境搭建
+
+关于 Electron，你可以直接使用 html+js，也可以选择 vue,reacet 等等。由于我们的前端团队使用的是 vue，所以我们主要来说说 Electron + vue。
+
+如果你在网上搜，大多数教程会把你指向一个叫 Electron-vue 的项目，这是国外一个大神为了方便大伙开发 Electron 搭建的一个脚手架，老中医也体检了一把，vueCLi4.x 不支持，Electron 版本只有 2.X，要知道现在 Electron 已经来到 8.3 了，秉承着老中医喜新厌旧的职业操守，果断放弃。
+
+自己动手，搭建一个基于 vueCli4 和 Electron 最新版本的环境吧。
+
+## 所需工具
+
+**node V12+**
+
+**npm**
+
+**cnpm** `$ npm install -g cnpm --registry=https://registry.npm.taobao.org`
+
+**vue cli4** `$ npm install -g @vue/cli`
+
+注意版本
+
+## 开整
+
+```
+// 创建项目
+vue create electron
+
+// 创建成功后进入项目
+cd electron
+
+// 安装 vue-cli-plugin-electron-builder
+vue add electron-builder
+
+// 这一步如果卡住 用cnpm 先安装 electron-chromedriver
+cnpm install --save electron-chromedriver
+
+```
+
+Electron 最高只有 6？没关系先选择
+
+![](https://user-gold-cdn.xitu.io/2020/5/19/1722bb857e3ec1d4?w=2328&h=570&f=png&s=104475)
+
+到了这一步就是下包了 但速度很稳定 控制在 1~5 kb/s 真的快啊，弄完可以下班了。
+![](https://user-gold-cdn.xitu.io/2020/5/19/1722baf6f6495fd4?w=2356&h=1184&f=png&s=215787)
+
+这果断不能忍啊 Ctrl + c 结束任务 顺便解决一下 Electron 版本的问题，检查一下 src 下有米有 background.js 如果有那说明你已经成功一大半了，打开 package.js 手动修改 Electron 的版本到 8.3
+
+![](https://user-gold-cdn.xitu.io/2020/5/19/1722bbd72037fdce?w=2400&h=914&f=png&s=285625)
+
+```
+// 删除node_modules
+rm -rf node_modules
+
+// 淘宝绝杀
+cnpm install
+```
+
+这速度是不是杠杠的
+
+![](https://user-gold-cdn.xitu.io/2020/5/19/1722bc1a9fda655d?w=2198&h=132&f=png&s=45595)
+
+指令
+
+```
+# vue serve
+
+npm run serve
+
+# vue build
+
+npm run build
+
+# electron:serve
+
+npm run electron:serve
+
+# electron:build
+
+npm run electron:build
+
+```
+
+## 缓存修复
+
+问题又来了，大家会发现 npm run electron:build 打包的时候又会下载 electron 的包，还有部分人说，我不喜欢 cnpm，我就喜欢 npm，我就喜欢 yarn。其实我们用 cnpm 主要就是更快的搭建环境，下面我们先修复一下 electron 的缓存
+
+```
+<!--缓存目录-->
+Linux：$XDG_CACHE_HOME或~/.cache/electron/
+苹果系统：~/Library/Caches/electron/
+Windows：$LOCALAPPDATA/electron/Cache 或~/AppData/Local/electron/Cache/
+```
+
+以 mac 为例 进入~/Library/Caches/electron/目录 看到 taobao 字样的文件夹，咱们把里面的包复制一份放到外层 这样打包就不用再下载了，喜欢 npm 和 yarn 的小伙伴可以 删除 node_modules 重新 install
+![](https://user-gold-cdn.xitu.io/2020/5/19/1722bcc2d86e075d?w=2470&h=554&f=png&s=175534)
+
+## 懒人专享
+
+懒得创建就 git clone,直接 cnpm install 吧,如果喜欢其他方式构建，请参照缓存修复
+
+github 地址：https://github.com/JackFlyL/Electron-vue.git
+
+## 开发配置
+
+基本上前端同学就轻车熟路了，这和开发 vue 一毛一样，干就完了
+
+npm run electron:serve 进入开发环境
+
+src/background.js 就是 electron 程序的配置
+
+比如应用宽高配置，根据自己的项目需求自己配置
+
+```
+  win = new BrowserWindow({ width: 800, height: 600, webPreferences: {
+    nodeIntegration: true
+  } })
+```
+
+## 打包配置
+
+打包应用时如果有定制需求，需要在项目根目录创建一个 vue.config.js
+
+```
+// vue.config.js
+
+module.exports = {
+  pluginOptions: {
+    electronBuilder: {
+      builderOptions: {
+        appId: "com.example.app",
+        productName: "aDemo", //项目名，也是生成的安装文件名，即aDemo.exe
+        copyright: "Copyright © 2019", //版权信息
+        directories: {
+          output: "./dist", //输出文件路径
+        },
+        mac: {
+          //mac相关配置
+          icon: "./logo.png", //图标，当前图标在根目录下，注意这里有两个坑
+        },
+      },
+    },
+  },
+};
+```
+
+详细配置参考 API：https://www.electron.build/
+
+---
+
+# 主线科技招聘啦！这才是主题，没想到吧！
+
+## 【福利前景】
+
+业务前景：行业细分头部领跑、高速发展中，AI 智能驾驶精准落地；
+
+技术驱动：清北硕博、伯克利、苏黎世学长带队，学霸导师坐对桌；
+
+福利保障：七险一金（全额）、户口指标（北、上、津）、股票期权；
+
+团队氛围：做事专业！值得信赖！总结起来，就是——靠谱！！
+
+## 【公司介绍】
+
+主线科技成立于 2017 年，是致力于用智能驾驶技术打造智慧物流产品的人工智 能国家高新企业。公司致力于打造封闭、半封闭和城区全场景下的智能驾驶物流 引擎，赋能于港口、高速干线、物流园区和城区配送等多样化物流场景。主线科 技现已成功实现智能驾驶集装箱卡车在天津港等多个港口码头下的常态化无人 自主水平运输，目前正在逐步发展智能驾驶在高速干线、城区配送等场景的应用， 以无人驾驶为桥梁，真正将“AI+物流”结合起来。目前，“TrunkPort”、 “TrunkPilot”均已对外发布，并在天津、河北等地开展试运营，逐步实现技术 解放生产力，把科技的成果带给每一位物流人。 https://www.trunk.tech
+
+## 【关于团队】
+
+团队成员毕业于清华大学、北京大学、伯克利、苏黎世联邦理工等国内外知名学 府，曾就职于谷歌、百度、微软亚洲研究院、特斯拉等公司。团队技术能力覆盖 智能驾驶全栈，融合感知与厘米级定位，语意级认知，车规级控制等，并在环境 感知、驾驶认知、智能控制及汽车电子技术等领域取得了多项第一。 在无人驾驶领域有多年的经验积累和影响力，由北大清华师兄创立，创始团队来 自原百度无人车创始团队成员和中国智能车大赛各校队队长。公司成员曾供职于 谷歌、百度、MSRA 等科技公司。不仅有玩转 40 吨重型卡车控制的汽车专家， 还有提出激光深度学习等领先技术的行业大牛。
+
+## 招聘职位
+
+**控制算法：**
+
+1、负责自动驾驶控制技术方案的设计、实施与验证
+
+2、能够独立承担自动驾驶控制算法的开发，并对团队成员给予技术指导
+
+3、负责 ADAS 相关软件技术的前期追踪和研究
+
+4、协同其他工程师完成整个系统的联调和集成， 并对技术难点能提供切实可行的解决方案
+
+**决策规划算法：**
+
+1、负责自动驾驶决策、规划算法的设计和研发；
+
+2、总结和归纳场景，负责决策规划算法的测试和完备性论证；
+
+**定位算法：**
+
+1、负责自动驾驶定位算法的设计和研发；
+
+2、负责定位算法的工程化和优化，保证算法研究落到实处；
+
+**激光 slam 建图：**
+
+1、负责激光雷达建图、定位算法的设计、开发与优化；
+
+2、负责自动驾驶 slam 建图定位的算法设计及优化。
+
+## 更多职位请咨询
+
+简历直达：wangqiong@trunk.tech
+
+微信咨询：lulu92ber
+
+HR 姐姐美丽又温油，团队是真滴靠谱儿！
